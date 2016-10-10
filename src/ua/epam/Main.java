@@ -12,10 +12,7 @@ public class Main {
         for ( int i = 0; i < 10; i++ ) {
             a = scanner.nextInt();
 
-            FactorialThread f = new FactorialThread(a);
-
-            f.start();
-            f.interrupt();
+            new FactorialThread(a).start();
         }
 
         scanner.close();
@@ -30,14 +27,23 @@ public class Main {
 
     @Override
     public void run() {
-        try{
-            Thread.sleep(3000);
-        }catch(InterruptedException e){}
-
-        System.out.println("The factorial of " + number + " is " + factorial(number) + ".");
+        if ( number < 0 ) {
+            System.out.println("You entered a negative number. Please, enter an integer.");
+        } else {
+            try {
+                long fact = factorial(number);
+                synchronized (System.out) {
+                    System.out.print("The factorial of " + number + " = ");
+                    System.out.println(factorial(fact));
+                }
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
+        }
     }
 
-     private static synchronized long factorial(long number) {
+     private long factorial(long number) throws InterruptedException {
+         Thread.sleep(2000);
          if (number == 0 || number == 1) {return 1;}
          return (number * factorial(number-1));
      }
